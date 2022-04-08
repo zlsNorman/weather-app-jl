@@ -16,7 +16,7 @@ export default function Selection({
       <label className=" text-white">{optionValue.label}</label>
       <select onChange={(e) => callback && callback(e.target.value)}>
         {!mandatory && <option key={""} value={""}></option>}
-        {optionValue.option.map((el, index) => {
+        {optionValue.option.map((el) => {
           return (
             <option key={el[0]} value={el[0]}>
               {el[1]}

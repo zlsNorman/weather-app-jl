@@ -32,7 +32,8 @@ export function getWeatherApi(
     responseType: "json",
   })
     .then((res: AxiosResponse<ApiResponseObj>) => callback(res.data))
-    .catch(
-      (e) => errorCallback && errorCallback("wählen Sie eine gültige Stadt")
-    );
+    .catch((e) => {
+      errorCallback && errorCallback("no valid city");
+      console.log(e);
+    });
 }
