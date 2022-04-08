@@ -65,4 +65,14 @@ export interface ApiResponseObj {
   id: number;
   name: string;
   cod: number;
+  timestamp?: Date;
+}
+
+export interface Idispatcher {
+  city: string;
+  data: ApiResponseObj;
+}
+
+export interface IWeather {
+  [key: string]: ApiResponseObj;
 }

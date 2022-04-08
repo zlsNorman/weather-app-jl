@@ -1,52 +1,59 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useWeatherContext } from "../provider/WeatherProvider";
+import { getWeatherApi } from "./api/weatherApi";
 import LoadingSpinner from "./LoadingSpinner";
 
 export default function WeatherDetails() {
-  const { weather, setWeather } = useWeatherContext();
+  const { weather, dispatch } = useWeatherContext();
+  const { city } = useParams();
 
-  if (!weather) return <LoadingSpinner />;
-  console.log(weather);
+  //TODO wenn React Query uo to date ist umbauen damit es mit dem Storage verknüpft ist
+  if (!city) {
+    return <LoadingSpinner />;
+  }
+  if (!weather) {
+    getWeatherApi(city, "de", "metric", dispatch);
+    return <LoadingSpinner />;
+  }
 
+  const weatherr = weather[city];
   return (
-    <div>
+    <div className="border-4 border-white w-auto h-auto m-auto absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 p-4">
       <div className="text-white flex flex-col">
-        <span>Name</span> {weather.name}
+        <span>Name</span> {weatherr.name}
       </div>
       <div className="text-white flex flex-col">
         <span>Country</span>
-        {weather.sys.country}
+        {weatherr.sys.country}
       </div>
       <div className="text-white flex flex-col">
         <span>Latitude</span>
-        {weather.coord.lat}
+        {weatherr.coord.lat}
       </div>
       <div className="text-white flex flex-col">
         <span>Longitude</span>
-        {weather.coord.lon}
+        {weatherr.coord.lon}
       </div>
       <div className="text-white flex flex-col">
         <span>Clouds in %</span>
-        {weather.clouds.all}
+        {weatherr.clouds.all}
       </div>
       <div className="text-white flex flex-col">
         <span>Temperatur</span>
-        {weather.main.temp}
+        {weatherr.main.temp}
       </div>
       <div className="text-white flex flex-col">
         <span>Min</span>
-        {weather.main.temp_min}
+        {weatherr.main.temp_min}
       </div>
       <div className="text-white flex flex-col">
         <span>Max</span>
-        {weather.main.temp_max}
+        {weatherr.main.temp_max}
       </div>
-      <button
-        className="bg-white text-black p-2  w-full"
-        onClick={(e) => setWeather(undefined)}
-      >
+      <Link to={"/"} className="bg-white text-black w-full">
         Back
-      </button>
+      </Link>
     </div>
   );
 }

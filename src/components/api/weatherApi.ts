@@ -24,17 +24,16 @@ export function getWeatherApi(
   city: string,
   lang = "de",
   units = "metric",
-  callback: (value: SetStateAction<ApiResponseObj | undefined>) => void,
+  dispatch: (value: SetStateAction<any | undefined>) => void,
   errorCallback?: React.Dispatch<React.SetStateAction<string | undefined>>
 ) {
-  const leipzig = axios({
+  axios({
     method: "GET",
     url: `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&lang=${lang}&units=${units}`,
     responseType: "json",
   })
-    .then((res: AxiosResponse<ApiResponseObj>) => callback(res.data))
+    .then((res: AxiosResponse<any>) => dispatch({ city, data: res.data }))
     .catch((e) => {
       errorCallback && errorCallback("no valid city");
-      console.log(e);
     });
 }

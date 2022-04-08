@@ -3,63 +3,111 @@ import { useWeatherContext } from "../../provider/WeatherProvider";
 import { getWeatherApi, useGetWeatherByApi } from "../api/weatherApi";
 import Selection from "./Selection";
 
+interface IformData {
+  city: string;
+  unit: string;
+  lang: string;
+}
 export default function WeatherForm() {
-  const { weather, setWeather } = useWeatherContext();
-  const [city, setCity] = useState<string>("");
-  const [unit, setUnit] = useState<string>();
-  const [lang, setLang] = useState<string>();
+  const { dispatch } = useWeatherContext();
   const [error, setError] = useState<string>();
-  const unitObj = {
-    label: "Unit",
-    option: [
-      ["metric", "Celsius"],
-      ["imperial", "Fahrenheit"],
-      ["standard", "Kelvin"],
-    ],
-  };
-  const langObj = {
-    label: "Language",
-    option: [
-      ["de", "de"],
-      ["en", "en"],
-    ],
-  };
-  const selections = [
-    { value: unitObj, setter: setUnit, mandatory: true },
-    { value: langObj, setter: setLang, mandatory: true },
+
+  const [formData, setFormData] = useState<IformData>({
+    city: "",
+    unit: "metric",
+    lang: "de",
+  });
+
+  const { city, unit, lang } = formData;
+
+  const selectOptionsArr = [
+    {
+      key: "unit",
+      label: "Unit",
+      options: [
+        {
+          value: "metric",
+          label: "Celsius",
+        },
+        {
+          value: "imperial",
+          label: "Fahrenheit",
+        },
+        {
+          value: "standard",
+          label: "Kelvin",
+        },
+      ],
+    },
+    {
+      key: "lang",
+      label: "Language",
+      options: [
+        {
+          value: "de",
+          label: "German",
+        },
+        {
+          value: "en",
+          label: "English",
+        },
+      ],
+    },
   ];
 
-  const formSubmitted = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    city.length >= 2
-      ? getWeatherApi(city, lang, unit, setWeather, setError)
-      : setError("city needs at least 2 letters");
+  const handleInput = ({ name = "", value = "" }) => {
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (city?.length > 1) {
+      getWeatherApi(city, lang, unit, dispatch, setError);
+    } else {
+      setError("city needs at least 2 letters");
+    }
+  };
+
   return (
     <>
-      <form onSubmit={formSubmitted}>
+      <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-2 ">
           <div className="flex gap-2 flex-col">
             <label className="text-white">City</label>
             <input
-              onChange={(e) => setCity(e.target.value)}
-              className={
-                error ? "border-red-700 px-1 border-2" : "px-1 border-2"
+              name="city"
+              onChange={({ target: { name, value } }) =>
+                handleInput({ name, value })
               }
+              className={`px-1 border-2 ${error && "border-red-700"}`}
               type={"text"}
             ></input>
           </div>
           <div className="flex gap-2">
-            {selections.map((selectionObj) => (
-              <Selection
-                key={selectionObj.value.label}
-                optionValue={selectionObj.value}
-                mandatory={selectionObj.mandatory}
-                callback={selectionObj.setter}
-              />
+            {selectOptionsArr.map(({ key, label, options }) => (
+              <div key={key} className="w-full flex flex-col gap-2">
+                <label className="text-white">{label}</label>
+                <select
+                  name={key}
+                  onChange={({ target: { name, value } }) =>
+                    handleInput({ name, value })
+                  }
+                >
+                  {options.map(({ value, label }) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             ))}
           </div>
-          <button className="bg-white text-black">Search</button>
+          <button type="submit" className="bg-white text-black">
+            Search
+          </button>
         </div>
       </form>
       <p className="text-red-700">{error && error}</p>
