@@ -3,13 +3,13 @@ import { ApiResponseObj, Idispatcher, IWeather } from "../types/Weather";
 import { useNavigate } from "react-router-dom";
 
 interface WeatherContext {
-  weather: ApiResponseObj | undefined;
-  setWeather: React.Dispatch<React.SetStateAction<ApiResponseObj | undefined>>;
+  weather: IWeather | undefined;
+  dispatch: ({ city, data }: Idispatcher) => void;
 }
 
-const WeatherContext = createContext({} as any);
+const WeatherContext = createContext({} as WeatherContext);
 
-export const useWeatherContext = (): any => {
+export const useWeatherContext = (): WeatherContext => {
   return useContext(WeatherContext);
 };
 
