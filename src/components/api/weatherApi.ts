@@ -1,7 +1,8 @@
 import axios, { AxiosResponse } from "axios";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { ApiResponseObj } from "../../types/Weather";
-const apiKey = process.env.REACT_APP_API_KEY;
+//const apiKey = process.env.REACT_APP_API_KEY;
+const apiKey = "9f2141a232300101f79caee3666930e8";
 
 export function useGetWeatherByApi(
   city: string,
